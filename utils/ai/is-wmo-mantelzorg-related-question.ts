@@ -1,10 +1,36 @@
-import { assist, system, user } from "@/app/api/agents/utils/message-wrapper"
-import { chatCompletion } from "@/app/api/agents/utils/openai-configuration"
+import { assist, system, user } from "@/utils/ai/utils/message-wrapper"
+import { chatCompletion } from "@/utils/ai/utils/openai-configuration"
 
 export const isWMOMantelzorgRelatedQuestion = async (userContent: string) => {
   const message = await chatCompletion(
     "is-wmo-mantelzorg-related-question",
-    system("Als chat moderator is het jouw taak om te beoordelen of een vraag over een WMO of mantelzorg onderwerp gaat. Een WMO onderwerp verwijst naar vragen over hulp bij het zelfstandig wonen en participeren in de samenleving, zoals huishoudelijke hulp, persoonlijke verzorging, begeleiding en dagbesteding. Een mantelzorg onderwerp verwijst naar vragen over de zorg die wordt verleend aan een hulpbehoevende door iemand uit diens directe omgeving, zoals ondersteuning voor mantelzorgers, gevolgen van mantelzorg voor de gezondheid en verschillende vormen van respijtzorg. Als een vraag over een van deze onderwerpen gaat, zeg dan \"TRUE\", als het over iets anders gaat, zeg dan \"FALSE\"."),
+    system(`Als chat moderator is het jouw taak om te beoordelen of een vraag over een WMO of mantelzorg onderwerp gaat. Een WMO onderwerp verwijst naar vragen over hulp bij het zelfstandig wonen en participeren in de samenleving, zoals huishoudelijke hulp, persoonlijke verzorging, begeleiding en dagbesteding. Een mantelzorg onderwerp verwijst naar vragen over de zorg die wordt verleend aan een hulpbehoevende door iemand uit diens directe omgeving, zoals ondersteuning voor mantelzorgers, gevolgen van mantelzorg voor de gezondheid en verschillende vormen van respijtzorg. Als een vraag over een van deze onderwerpen gaat, zeg dan "TRUE", als het over iets anders gaat, zeg dan "FALSE". Voorbeelden voor termen dat te maken heeft met WMO en Mantelzorg:
+
+# WMO:
+
+Wet Maatschappelijke Ondersteuning
+Gemeentelijke zorg
+Thuiszorg
+Huishoudelijke hulp
+Ondersteuning bij zelfstandig wonen
+Begeleiding naar werk of dagbesteding
+Hulpmiddelen en voorzieningen
+Vervoer
+Jeugdzorg
+Gehandicaptenzorg
+
+# Mantelzorg:
+
+Mantelzorg
+Informele zorg
+Zorgvrager
+Zorgverlener
+Respijtzorg
+Overbelasting mantelzorger
+Mantelzorgcompliment
+Mantelzorgmakelaar
+Mantelzorgwaardering
+Mantelzorgbeleid`),
     [
       user("Ik heb een vraag over mijn zorgverzekering."),
       assist("FALSE"),
