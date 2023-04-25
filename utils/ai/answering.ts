@@ -1,10 +1,20 @@
-import { system, user } from "@/utils/ai/utils/message-wrapper";
-import { chatCompletion } from "@/utils/ai/utils/openai-configuration";
+import { system, user } from "@/utils/ai/utils/message-wrapper"
+import { chatCompletion } from "@/utils/ai/utils/openai-configuration"
+import { ChatCompletionRequestMessage } from "openai"
 
-export const answering = (userContent: string) => {
+type ChatCompletionRequestMessageNoSystem = ChatCompletionRequestMessage & {
+  role: "user" | "assistant"
+}
+
+interface AnsweringParams {
+  chatHistory: ChatCompletionRequestMessageNoSystem[]
+  userContent: string
+}
+
+export const answering = ({chatHistory, userContent}: AnsweringParams) => {
   return chatCompletion(
     "answering",
-    system(`Als WMO vraagbeantwoorder is het jouw taak om vragen te beantwoorden over hulp bij het zelfstandig wonen en participeren in de samenleving, zoals huishoudelijke hulp, persoonlijke verzorging, begeleiding en dagbesteding, evenals vragen over de zorg die wordt verleend aan een hulpbehoevende door iemand uit diens directe omgeving, zoals ondersteuning voor mantelzorgers, gevolgen van mantelzorg voor de gezondheid en verschillende vormen van respijtzorg. Voorbeelden voor termen en definities dat te maken heeft met WMO en Mantelzorg:
+    system(`Voorbeelden voor termen en definities dat te maken heeft met WMO en Mantelzorg:
     
 # WMO:
 
@@ -30,9 +40,22 @@ Overbelasting mantelzorger: Wanneer de zorgtaken te zwaar worden voor de mantelz
 Mantelzorgcompliment: Een blijk van waardering en erkenning voor de inzet van mantelzorgers.
 Mantelzorgmakelaar: Een persoon of organisatie die mantelzorgers ondersteunt bij het regelen van zorgtaken en het vinden van informatie en hulp.
 Mantelzorgwaardering: Een financiële tegemoetkoming voor mantelzorgers, als blijk van waardering.
-Mantelzorgbeleid: Het beleid van een organisatie of overheid met betrekking tot mantelzorg en de ondersteuning hiervan.`),
+Mantelzorgbeleid: Het beleid van een organisatie of overheid met betrekking tot mantelzorg en de ondersteuning hiervan.
+
+# Systeem:
+
+Als WMO vraagbeantwoorder van Zorggenoot is het jouw taak om vragen kort en bondig (50 woorden) te beantwoorden over hulp bij het zelfstandig wonen en participeren in de samenleving, zoals huishoudelijke hulp, persoonlijke verzorging, begeleiding en dagbesteding, evenals vragen over de zorg die wordt verleend aan een hulpbehoevende door iemand uit diens directe omgeving, zoals ondersteuning voor mantelzorgers, gevolgen van mantelzorg voor de gezondheid en verschillende vormen van respijtzorg. Verder wil je de gebruiker van Zorggenoot informeren over de platform door te bellen naar ""070 - 5130 130"" of te mailen naar ""info@zorggenoot.nl"".
+
+# Contact Zorggenoot:
+
+Zorggenoot is een platform waarop mantelzorgers en zorgvragers elkaar kunnen vinden en ondersteunen. tel: 070 - 5130 130 - email: info@zorggenoot.nl
+`),
     [
+      ...chatHistory,
       user(userContent),
     ],
-  );
-};
+    {
+      max_tokens: 256,
+    },
+  )
+}

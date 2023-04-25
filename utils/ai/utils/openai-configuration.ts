@@ -19,7 +19,7 @@ export const chatCompletion = async (
 ) => {
   const completion = await openai.createChatCompletion({
     model: "gpt-3.5-turbo",
-    messages: [
+    messages:  [
       system,
       ...messages,
     ],
