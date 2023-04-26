@@ -55,7 +55,7 @@ Zorggenoot is een platform waarop mantelzorgers en zorgvragers elkaar kunnen vin
       user(userContent),
     ],
     {
-      max_tokens: 256,
+      max_tokens: 512,
     },
   )
 }

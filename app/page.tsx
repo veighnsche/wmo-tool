@@ -47,21 +47,23 @@ export default function Home() {
   return (
     <main className="w-full h-screen flex flex-col">
       <Header/>
-      <div className="bg-[#F8F4F2] h-full flex flex-col justify-end">
-        <Disclaimer/>
-        {lines.map(({role, content}, index) => (
-          <ChatLine key={index} role={role} content={content}/>
-        ))}
-        {loading ? (
-          <div className="w-full h-12 flex justify-center items-center">
-            <Loading/>
-          </div>
-        ) : null}
-        {notRelated ? (
-          <div className="w-full flex justify-center">
-            <NotRelated/>
-          </div>
-        ) : null}
+      <div className="bg-[#F8F4F2] h-full flex flex-col justify-end overflow-x-auto">
+        <div className="overflow-x-auto">
+          <Disclaimer/>
+          {lines.map(({role, content}, index) => (
+            <ChatLine key={index} role={role} content={content}/>
+          ))}
+          {loading ? (
+            <div className="w-full h-12 flex justify-center items-center">
+              <Loading/>
+            </div>
+          ) : null}
+          {notRelated ? (
+            <div className="w-full flex justify-center">
+              <NotRelated/>
+            </div>
+          ) : null}
+        </div>
       </div>
       <div className="h-24 w-full bg-[#213F3D]">
         <UserInput
