@@ -2,53 +2,56 @@
 
 import { ChatLine, ChatLineProps } from "@/app/components/ChatLine"
 import { Disclaimer } from "@/app/components/Disclaimer"
+import { ErrorMessage } from "@/app/components/ErrorMessage"
 import { Header } from "@/app/components/Header"
 import { Loading } from "@/app/components/Loading"
-import { NotRelated } from "@/app/components/NotRelated"
 import { UserInput } from "@/app/components/UserInput"
+import { ERRORS } from "@/utils/ai/utils/errors"
 import { useState } from "react"
 
 export default function Home() {
   const [userInput, setUserInput] = useState("")
   const [lines, setLines] = useState<ChatLineProps[]>([])
   const [loading, setLoading] = useState(false)
-  const [notRelated, setNotRelated] = useState(false)
+  const [error, setError] = useState<false | ERRORS>(false)
 
   async function handleSubmit() {
     setLines(lines => {
       const newLines = [...lines]
-      if (notRelated) {
+      if (error) {
         newLines.pop()
       }
       return [...newLines, {role: "user", content: userInput}]
     })
-    setNotRelated(false)
+    setError(false)
     setUserInput("")
     setLoading(true)
 
     console.log("Before:", {chatHistory: lines, userContent: userInput})
 
-    const {isRelatedQuestion, answer} = await fetch("/api/assistant", {
+    const {error: resError, answer} = await fetch("/api/assistant", {
       method: "POST",
       body: JSON.stringify({chatHistory: lines, userContent: userInput}),
-    }).then((res) => res.json())
-    setLoading(false)
+    }).then((res) => {
+      setLoading(false)
+      return res.json()
+    })
 
-    console.log("After:", {isRelatedQuestion, answer})
+    console.log("After:", {error: resError, answer})
 
-    if (isRelatedQuestion) {
-      setLines(lines => [...lines, {role: "assistant", content: answer}])
+    if (resError) {
+      setError(resError)
       return
     }
 
-    setNotRelated(true)
+    setLines(lines => [...lines, {role: "assistant", content: answer}])
   }
 
   return (
     <main className="w-full h-screen flex flex-col">
       <Header/>
-      <div className="bg-[#F8F4F2] h-full flex flex-col justify-end overflow-x-auto">
-        <div className="overflow-x-auto">
+      <div className="bg-[#F8F4F2] h-full flex flex-col justify-end overflow-auto">
+        <div className="overflow-auto">
           <Disclaimer/>
           {lines.map(({role, content}, index) => (
             <ChatLine key={index} role={role} content={content}/>
@@ -58,9 +61,9 @@ export default function Home() {
               <Loading/>
             </div>
           ) : null}
-          {notRelated ? (
+          {error ? (
             <div className="w-full flex justify-center">
-              <NotRelated/>
+              <ErrorMessage error={error}/>
             </div>
           ) : null}
         </div>

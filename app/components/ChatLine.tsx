@@ -16,7 +16,7 @@ export const ChatLine = ({role, content}: ChatLineProps) => {
   return (
     <div className="py-5 min-h-20 flex justify-center">
       <div className="w-8">🤖</div>
-      <span className="w-[800px]">{content}</span>
+      <span className="w-[800px] whitespace-pre-wrap">{content}</span>
     </div>
   )
 }
